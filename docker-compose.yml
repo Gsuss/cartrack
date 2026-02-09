@@ -1,0 +1,38 @@
+services:
+  cartrack:
+    image: ghcr.io/Gsuss/cartrack:latest
+    container_name: cartrack
+    user: "1001:1001"
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
+    volumes:
+      - cartrack_data:/app/data
+      - cartrack_media:/app/media
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - DB_PATH=/app/data/cartrack.db
+      - MEDIA_PATH=/app/media
+    # Resource limits for optimization
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3001/api/auth/status', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  cartrack_data:
+  cartrack_media:

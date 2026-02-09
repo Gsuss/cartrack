@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="carGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <path d="M20,55 L25,45 L35,40 L65,40 L75,45 L80,55 L80,70 L75,75 L25,75 L20,70 Z"
+        fill="url(#carGradient)" stroke="#333" stroke-width="2"/>
+  <path d="M30,45 L38,42 L62,42 L70,45 L70,52 L30,52 Z"
+        fill="#87ceeb" stroke="#333" stroke-width="1.5" opacity="0.8"/>
+  <line x1="50" y1="42" x2="50" y2="52" stroke="#333" stroke-width="1.5"/>
+  <circle cx="32" cy="75" r="8" fill="#333" stroke="#555" stroke-width="2"/>
+  <circle cx="32" cy="75" r="4" fill="#888"/>
+  <circle cx="68" cy="75" r="8" fill="#333" stroke="#555" stroke-width="2"/>
+  <circle cx="68" cy="75" r="4" fill="#888"/>
+  <circle cx="78" cy="60" r="3" fill="#fff59d" stroke="#333" stroke-width="1"/>
+  <rect x="18" y="48" width="4" height="3" fill="url(#carGradient)" stroke="#333" stroke-width="1"/>
+</svg>

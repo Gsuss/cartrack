@@ -1,0 +1,82 @@
+# Dependencies
+node_modules
+client/node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnp
+.pnp.js
+
+# Testing
+coverage
+client/coverage
+*.test.js
+*.spec.js
+__tests__
+__mocks__
+
+# Production
+client/build
+
+# Misc
+.DS_Store
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+*.log
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*.swn
+.project
+.settings
+.classpath
+
+# Git
+.git
+.gitignore
+.gitattributes
+.github
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Documentation and config files not needed in container
+*.md
+README*
+LICENSE
+.editorconfig
+.prettierrc
+.eslintrc*
+tsconfig.json
+
+# CI/CD
+.travis.yml
+.gitlab-ci.yml
+.circleci
+.github
+
+# OS
+Thumbs.db
+desktop.ini
+
+# Development data
+data
+*.db
+*.db-shm
+*.db-wal
+
+# Backup files
+*.backup
+*.bak
+*.tmp
+
+# Development helpers
+nodemon.json

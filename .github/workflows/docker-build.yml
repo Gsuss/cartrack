@@ -1,0 +1,177 @@
+name: Docker Build and Push
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+    tags-ignore:
+      - '**'
+    paths:
+      - 'client/**'
+      - 'server/**'
+      - 'package*.json'
+      - 'Dockerfile'
+      - 'docker-compose.yml'
+      - '.github/workflows/docker-build.yml'
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to build'
+        required: true
+        default: 'main'
+        type: choice
+        options:
+          - main
+          - dev
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push:
+    runs-on: self-hosted
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.TOKEN }}
+
+      - name: Determine version tag
+        id: version
+        run: |
+          if [ "${{ github.ref_name }}" = "dev" ]; then
+            echo "tag=test" >> $GITHUB_OUTPUT
+          else
+            # Get the latest tag matching the v*.* pattern
+            LATEST_TAG=$(git tag -l "v*.*" --sort=-v:refname | head -n 1)
+
+            if [ -z "$LATEST_TAG" ]; then
+              # No tags exist, start with 1.0
+              NEW_VERSION="1.0"
+            else
+              # Extract major.minor from latest tag (remove 'v' prefix)
+              CURRENT_VERSION=${LATEST_TAG#v}
+              MAJOR=$(echo $CURRENT_VERSION | cut -d. -f1)
+              MINOR=$(echo $CURRENT_VERSION | cut -d. -f2)
+
+              # Check commit messages since last tag for breaking changes
+              COMMITS=$(git log ${LATEST_TAG}..HEAD --oneline)
+
+              if echo "$COMMITS" | grep -iE "^[a-f0-9]+ (BREAKING|major|MAJOR):"; then
+                # Major version bump
+                MAJOR=$((MAJOR + 1))
+                MINOR=0
+              else
+                # Minor version bump
+                MINOR=$((MINOR + 1))
+              fi
+
+              NEW_VERSION="${MAJOR}.${MINOR}"
+            fi
+
+            echo "tag=v${NEW_VERSION}" >> $GITHUB_OUTPUT
+            echo "version=${NEW_VERSION}" >> $GITHUB_OUTPUT
+
+            # Create and push the tag
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git tag "v${NEW_VERSION}"
+            git push origin "v${NEW_VERSION}"
+          fi
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.TOKEN }}
+
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ steps.version.outputs.tag }}
+            type=raw,value=latest,enable=${{ github.ref_name == 'main' }}
+
+      - name: Debug metadata
+        run: |
+          echo "Version tag: ${{ steps.version.outputs.tag }}"
+          echo "Meta tags: ${{ steps.meta.outputs.tags }}"
+          echo "Meta labels: ${{ steps.meta.outputs.labels }}"
+
+      - name: Build and push Docker image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
+          outputs: type=registry
+          provenance: false
+
+      - name: Verify image was pushed
+        run: |
+          echo "Image digest: ${{ steps.build.outputs.digest }}"
+          echo "Image tags: ${{ steps.meta.outputs.tags }}"
+          echo "Docker image should be available at:"
+          echo "${{ steps.meta.outputs.tags }}" | tr ',' '\n' | while read tag; do
+            echo "  - $tag"
+          done
+
+          # Verify the image exists in the registry
+          echo ""
+          echo "Verifying image in registry..."
+          docker pull ghcr.io/${{ github.repository }}:${{ steps.version.outputs.tag }} || echo "Warning: Could not pull image immediately (may need time to propagate)"
+
+      - name: Collect logs on failure
+        if: failure()
+        run: |
+          mkdir -p logs
+          echo "=== Workflow Run Information ===" > logs/workflow-logs.txt
+          echo "Workflow: ${{ github.workflow }}" >> logs/workflow-logs.txt
+          echo "Run ID: ${{ github.run_id }}" >> logs/workflow-logs.txt
+          echo "Run Number: ${{ github.run_number }}" >> logs/workflow-logs.txt
+          echo "Job: ${{ github.job }}" >> logs/workflow-logs.txt
+          echo "Repository: ${{ github.repository }}" >> logs/workflow-logs.txt
+          echo "Branch: ${{ github.ref_name }}" >> logs/workflow-logs.txt
+          echo "Commit: ${{ github.sha }}" >> logs/workflow-logs.txt
+          echo "Actor: ${{ github.actor }}" >> logs/workflow-logs.txt
+          echo "Event: ${{ github.event_name }}" >> logs/workflow-logs.txt
+          echo "Timestamp: $(date -u)" >> logs/workflow-logs.txt
+          echo "" >> logs/workflow-logs.txt
+          echo "=== Git Status ===" >> logs/workflow-logs.txt
+          git status >> logs/workflow-logs.txt 2>&1 || echo "Git status failed" >> logs/workflow-logs.txt
+          echo "" >> logs/workflow-logs.txt
+          echo "=== Git Log (last 10 commits) ===" >> logs/workflow-logs.txt
+          git log --oneline -10 >> logs/workflow-logs.txt 2>&1 || echo "Git log failed" >> logs/workflow-logs.txt
+          echo "" >> logs/workflow-logs.txt
+          echo "=== Environment Variables ===" >> logs/workflow-logs.txt
+          env | sort >> logs/workflow-logs.txt
+          echo "" >> logs/workflow-logs.txt
+          echo "=== Docker Info ===" >> logs/workflow-logs.txt
+          docker version >> logs/workflow-logs.txt 2>&1 || echo "Docker version failed" >> logs/workflow-logs.txt
+          docker info >> logs/workflow-logs.txt 2>&1 || echo "Docker info failed" >> logs/workflow-logs.txt
+
+      - name: Upload logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: workflow-logs-${{ github.run_id }}
+          path: logs/workflow-logs.txt
+          retention-days: 30

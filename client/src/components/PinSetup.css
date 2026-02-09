@@ -1,0 +1,139 @@
+.pin-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+  position: relative;
+}
+
+.theme-toggle-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+}
+
+.pin-card {
+  background: var(--card-bg);
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 400px;
+  width: 100%;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pin-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.car-icon {
+  font-size: 60px;
+  margin-bottom: 10px;
+}
+
+.pin-header h1 {
+  font-size: 32px;
+  color: var(--card-text);
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.pin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pin-form label {
+  color: var(--card-text);
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.pin-input {
+  padding: 16px;
+  font-size: 24px;
+  letter-spacing: 12px;
+  text-align: center;
+  border: 2px solid var(--input-border);
+  border-radius: 12px;
+  outline: none;
+  transition: all 0.3s ease;
+  font-family: monospace;
+  background: var(--input-bg);
+  color: var(--input-text);
+}
+
+.pin-input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.pin-button {
+  padding: 14px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.pin-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.pin-button:active {
+  transform: translateY(0);
+}
+
+.pin-button.secondary {
+  background: var(--info-bg);
+  color: var(--card-text);
+}
+
+.pin-button.secondary:hover {
+  background: var(--info-hover-bg);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+}
+
+.button-group .pin-button {
+  flex: 1;
+}
+
+.error-message {
+  color: var(--danger);
+  font-size: 14px;
+  padding: 10px;
+  background: rgba(229, 62, 62, 0.1);
+  border-radius: 8px;
+  border-left: 3px solid var(--danger);
+}

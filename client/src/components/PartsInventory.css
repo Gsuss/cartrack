@@ -1,0 +1,183 @@
+.parts-inventory {
+  padding: 20px 0;
+}
+
+.parts-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.parts-header h3 {
+  color: var(--card-text);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.add-part-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.add-part-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.parts-form {
+  background: var(--info-bg);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.file-input {
+  padding: 8px 0;
+}
+
+.picture-preview {
+  margin: 16px 0;
+  text-align: center;
+}
+
+.picture-preview img {
+  max-width: 300px;
+  max-height: 300px;
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
+  object-fit: contain;
+}
+
+.empty-state-parts {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+  font-size: 16px;
+}
+
+.parts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.part-card {
+  background: var(--info-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.part-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.part-image {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background: var(--card-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.part-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.part-content {
+  padding: 16px;
+}
+
+.part-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.part-header h4 {
+  color: var(--card-text);
+  font-size: 18px;
+  font-weight: 700;
+  flex: 1;
+}
+
+.part-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.part-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.part-detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+}
+
+.detail-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.detail-value {
+  font-size: 14px;
+  color: var(--card-text);
+  font-weight: 600;
+  text-align: right;
+}
+
+.model-link {
+  color: #667eea;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  border-bottom: 2px solid transparent;
+}
+
+.model-link:hover {
+  color: #764ba2;
+  border-bottom-color: #764ba2;
+}
+
+@media (max-width: 768px) {
+  .parts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .parts-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .add-part-btn {
+    width: 100%;
+  }
+
+  .picture-preview img {
+    max-width: 100%;
+  }
+}
