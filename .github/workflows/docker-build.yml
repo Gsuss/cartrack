@@ -12,7 +12,6 @@ on:
       - 'server/**'
       - 'package*.json'
       - 'Dockerfile'
-      - '.github/workflows/docker-build.yml'
   workflow_dispatch:
 
 env:
