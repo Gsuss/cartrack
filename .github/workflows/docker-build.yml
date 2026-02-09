@@ -1,4 +1,4 @@
-name: Docker Build and Push
+name: Docker image build and push to registry
 
 on:
   push:
@@ -15,15 +15,6 @@ on:
       - 'docker-compose.yml'
       - '.github/workflows/docker-build.yml'
   workflow_dispatch:
-    inputs:
-      branch:
-        description: 'Branch to build'
-        required: true
-        default: 'main'
-        type: choice
-        options:
-          - main
-          - dev
 
 env:
   REGISTRY: ghcr.io
