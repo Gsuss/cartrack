@@ -1,6 +1,6 @@
 services:
   cartrack:
-    image: ghcr.io/Gsuss/cartrack:latest
+    image: ghcr.io/gsuss/cartrack:latest
     container_name: cartrack
     user: "1001:1001"
     restart: unless-stopped
