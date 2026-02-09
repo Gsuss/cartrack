@@ -12,7 +12,6 @@ on:
       - 'server/**'
       - 'package*.json'
       - 'Dockerfile'
-      - '.github/workflows/docker-build.yml'
   workflow_dispatch:
 
 env:
@@ -22,6 +21,7 @@ env:
 jobs:
   build-and-push:
     runs-on: self-hosted
+    timeout-minutes: 60
     permissions:
       contents: write
       packages: write
